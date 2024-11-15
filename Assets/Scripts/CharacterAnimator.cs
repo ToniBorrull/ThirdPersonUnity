@@ -39,6 +39,7 @@ public class CharacterAnimator : MonoBehaviour
         FixLookat();
 
         gunPivot.LookAt(lookat);
+        gunLeftHand.LookAt(gunPivot);
     }
 
     private void FixLookat()
