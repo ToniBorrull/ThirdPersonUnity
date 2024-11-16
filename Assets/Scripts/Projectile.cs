@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
@@ -10,41 +11,65 @@ public class Projectile : MonoBehaviour
     public LayerMask layers;
     public float collisionForceMultiplier = 2f;
     public float radius = .1f;
+    public GameObject bulletHole;
     [HideInInspector]
     public Rigidbody rb;
 
-    Vector3 lastPos;
-    void Start()
-    {
+    Transform parentObject;
+
+    public Vector3 lastPos;
+    private void OnEnable()
+    { 
         rb = GetComponent<Rigidbody>();
+        rb.velocity = Vector3.zero;
         rb.AddRelativeForce(new Vector3(Random.Range(forceMin.x, forceMax.x), Random.Range(forceMin.y, forceMax.y), Random.Range(forceMin.z, forceMax.z)));
-        Destroy(gameObject, disappearTime);
         lastPos = transform.position;
+        parentObject = transform.parent;
         transform.parent = null;
+        lastPos = transform.position;
+        
+        StartCoroutine(BulletDisable());
+       
+    }
+    IEnumerator BulletDisable()
+    {
+        yield return new WaitForSeconds(disappearTime);
+        transform.parent = parentObject;
+        transform.localPosition = Vector3.zero;
+        transform.parent.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
     {
-        Vector3 dir = transform.position - lastPos;
-
-        Debug.DrawRay(lastPos, dir, Color.blue, disappearTime);
-
-        RaycastHit hit;
-
-        if (Physics.SphereCast(lastPos, radius, dir, out hit, dir.magnitude, layers))
+        if (this.gameObject.activeInHierarchy)
         {
-            Hitted(hit);
-        }
+            Vector3 dir = transform.position - lastPos;
 
-        lastPos = transform.position;
+            Debug.DrawRay(lastPos, dir, Color.blue, disappearTime);
+
+            RaycastHit hit;
+
+            if (Physics.SphereCast(lastPos, radius, dir, out hit, dir.magnitude, layers))
+            {
+                Hitted(hit);
+            }
+
+            lastPos = transform.position;
+        }
     }
 
     void Hitted(RaycastHit hit)
     {
+        GameObject bullet = Instantiate(bulletHole, hit.point, Quaternion.LookRotation(hit.normal));
+        bullet.transform.SetParent(hit.transform);
+
         if (hit.rigidbody)
         {
             hit.rigidbody.AddForceAtPosition(rb.velocity * rb.mass * collisionForceMultiplier, this.transform.position);
         }
-        Destroy(gameObject);
+        
+        
+        //Destroy(gameObject);
+
     }
 }

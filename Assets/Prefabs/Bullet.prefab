@@ -5202,7 +5202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 978b40d140721cf48bf29673197ef87b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disappearTime: 5
+  disappearTime: 2
   forceMin: {x: -1, y: -1, z: 5000}
   forceMax: {x: 1, y: 1, z: 10000}
   layers:
@@ -5210,8 +5210,9 @@ MonoBehaviour:
     m_Bits: 55
   collisionForceMultiplier: 1
   radius: 0.1
-  spawnOnCollide: {fileID: 802939741174777362, guid: 5711a24ec9f4fed488a8630eae21dde6, type: 3}
+  bulletHole: {fileID: 802939741174777362, guid: 5711a24ec9f4fed488a8630eae21dde6, type: 3}
   rb: {fileID: 0}
+  lastPos: {x: 0, y: 0, z: 0}
 --- !u!96 &7661018759388145756
 TrailRenderer:
   serializedVersion: 3
@@ -5331,7 +5332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6021660988465757406
 Transform:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ public class GenericGun : MonoBehaviour
     [Min(1f/60f)]
     public float fireRate = 0.1f;
     public float reloadTime = 0.5f;
+    private float maxTime;
     [Header("Firing")]
     public UnityEvent onFire;
     public Transform firePoint;
@@ -23,21 +24,68 @@ public class GenericGun : MonoBehaviour
     public Vector3 knockbackRotation;
     Vector3 originalPosition;
     Quaternion originalRotation;
+    [Header("Mira")]
+    public Transform mira;
+    RaycastHit hit;
+    public float distance;
+    public LayerMask layerMask;
+
+    private float lastShot;
     private void Start()
     {
         originalPosition = transform.localPosition;
         originalRotation = transform.localRotation;
+        maxTime = reloadTime;
     }
 
     void Update()
     {
         transform.localPosition = Vector3.Lerp(transform.localPosition, originalPosition, positionRecover * Time.deltaTime);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, originalRotation, rotationRecover * Time.deltaTime);
+
+        if (clipCurrent <= 0) {
+            if (reloadTime <= 0) {
+                clipCurrent = clipMax;
+                reloadTime = maxTime;
+            }
+            else
+            {
+                reloadTime -= Time.deltaTime;
+            }
+        }
+        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask))
+        {
+            Debug.DrawRay(transform.position, transform.forward * hit.distance, Color.yellow);
+            mira.transform.position = Camera.main.WorldToScreenPoint(hit.point);
+            //Debug.Log("Did Hit");
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.forward * distance, Color.red);
+            //Debug.Log("Not Hit");
+        }
+        if (automatic)
+        {
+            if (Input.GetButton("Fire1") && clipCurrent > 0 && Time.time > lastShot + fireRate)
+            {
+                Fire();
+            }
+        }
     }
     public void Fire()
     {
-        Destroy(Instantiate(bullet, firePoint.position, firePoint.rotation), 10);
+        //Destroy(Instantiate(bullet, firePoint.position, firePoint.rotation), 10);
+
+         bullet = ObjectPool.SharedInstance.GetPooledObject();
+        if(bullet != null)
+        {
+            bullet.transform.position = firePoint.position;
+            bullet.transform.rotation = firePoint.rotation;
+            bullet.SetActive(true);
+        }
         onFire.Invoke();
+        clipCurrent--;
+        lastShot = Time.time;
         StartCoroutine(Knockback_Corutine());
     }
     IEnumerator Knockback_Corutine()

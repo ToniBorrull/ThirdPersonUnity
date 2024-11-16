@@ -18,6 +18,12 @@ public class CharacterAnimator : MonoBehaviour
     public RaycastLookAt cameraLookAt;
     public float lookAtSpeed = 10;
     Vector3 lookat;
+
+    [Range(0f, 1f)] public float rightHandIKWeight = 1f;
+    [Range(0f, 1f)] public float leftHandIKWeight = 1f;
+    [Range(0f, 1f)] public float lookIKWeight = 1f;
+
+
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -39,7 +45,6 @@ public class CharacterAnimator : MonoBehaviour
         FixLookat();
 
         gunPivot.LookAt(lookat);
-        gunLeftHand.LookAt(gunPivot);
     }
 
     private void FixLookat()
@@ -56,6 +61,34 @@ public class CharacterAnimator : MonoBehaviour
             float maxAngle = Mathf.Acos(lookAtMaxAngle) * Mathf.Rad2Deg;
             forwardLookAt = Quaternion.AngleAxis(angle > 0 ? -maxAngle : maxAngle, axis) * transform.forward;
             lookat = cameraLookAt.transform.position + forwardLookAt * distance;
+        }
+    }
+    private void OnAnimatorIK(int layerIndex)
+    {
+        if (anim)
+        {
+
+            if (gunRightHand != null)
+            {
+                anim.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandIKWeight);
+                anim.SetIKRotationWeight(AvatarIKGoal.RightHand, rightHandIKWeight);
+                anim.SetIKPosition(AvatarIKGoal.RightHand, gunRightHand.position);
+                anim.SetIKRotation(AvatarIKGoal.RightHand, gunRightHand.rotation);
+            }
+
+            if (gunLeftHand != null)
+            {
+                anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftHandIKWeight);
+                anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftHandIKWeight);
+                anim.SetIKPosition(AvatarIKGoal.LeftHand, gunLeftHand.position);
+                anim.SetIKRotation(AvatarIKGoal.LeftHand, gunLeftHand.rotation);
+            }
+
+            if (lookat != null)
+            {
+                anim.SetLookAtWeight(lookIKWeight);
+                anim.SetLookAtPosition(lookat);
+            }
         }
     }
 }
