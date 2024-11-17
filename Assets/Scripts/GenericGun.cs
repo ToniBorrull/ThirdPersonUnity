@@ -69,6 +69,7 @@ public class GenericGun : MonoBehaviour
         {
             reloadTime = 0;
         }
+
         //Disparar
         if (automatic)
         {
@@ -87,6 +88,7 @@ public class GenericGun : MonoBehaviour
     }
     public void Fire()
     {
+        //Al disparar, poner la bala en la punta del arma
          bullet = ObjectPool.SharedInstance.GetPooledObject();
         if(bullet != null)
         {

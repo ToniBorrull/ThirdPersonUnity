@@ -65,9 +65,10 @@ public class CharacterAnimator : MonoBehaviour
     }
     private void OnAnimatorIK(int layerIndex)
     {
+        
         if (anim)
         {
-
+            //Poner manos en el punto del arma correspondiente
             if (gunRightHand != null)
             {
                 anim.SetIKPositionWeight(AvatarIKGoal.RightHand, rightHandIKWeight);
@@ -83,7 +84,7 @@ public class CharacterAnimator : MonoBehaviour
                 anim.SetIKPosition(AvatarIKGoal.LeftHand, gunLeftHand.position);
                 anim.SetIKRotation(AvatarIKGoal.LeftHand, gunLeftHand.rotation);
             }
-
+            //Que la cabeza mire donde mira el arma
             if (lookat != null)
             {
                 anim.SetLookAtWeight(lookIKWeight);

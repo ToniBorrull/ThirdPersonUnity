@@ -32,14 +32,17 @@ public class CameraMove : MonoBehaviour
         vertical -= Input.GetAxis("Mouse Y");
         horizontal += Input.GetAxis("Mouse X");
 
+        //Aplicarle un offset para que se vea a la derecha
         Vector3 rightPos = this.transform.position + transform.right * camOffset;
         camara.transform.LookAt(rightPos);
         
+        //Limitar el angulo que la camara puede tener, solo en vertical
         float verticalClamp = Mathf.Clamp(vertical, -90f, 90f);
+
         transform.rotation = Quaternion.Euler(verticalClamp, horizontal, 0);   
         dir1 = (camara.transform.position - this.transform.position).normalized;
 
-
+        //Raycast para mirar si la camara está chocando con algo
         RaycastHit hit;
         if (Physics.SphereCast(transform.position, cameraRadius, dir1, out hit, distance, layerMask))
         {

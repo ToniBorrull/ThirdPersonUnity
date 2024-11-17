@@ -20,6 +20,7 @@ public class Projectile : MonoBehaviour
     public Vector3 lastPos;
     private void OnEnable()
     { 
+        //El Start fallaba, en el OnEnable se hace la logica para que cuando se active la bala funcione
         rb = GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.AddRelativeForce(new Vector3(Random.Range(forceMin.x, forceMax.x), Random.Range(forceMin.y, forceMax.y), Random.Range(forceMin.z, forceMax.z)));
@@ -54,6 +55,7 @@ public class Projectile : MonoBehaviour
 
     void Hitted(RaycastHit hit)
     {
+        //Instancia del bullet hole
         GameObject bullet = Instantiate(bulletHole, hit.point, Quaternion.LookRotation(hit.normal));
         bullet.transform.SetParent(hit.transform);
 

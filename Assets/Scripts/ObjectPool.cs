@@ -16,6 +16,7 @@ public class ObjectPool : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Crear objetos y guardarlos en una lista
         pooledObjects = new List<GameObject>();
         GameObject tmp;
         for(int i = 0; i < amountToPool; i++)
@@ -39,6 +40,7 @@ public class ObjectPool : MonoBehaviour
 
     public GameObject GetPooledObject()
     {
+        //Devolver los objetos si no estan en Active
         for (int i = 0; i < amountToPool; i++) {
             if (!pooledObjects[i].activeInHierarchy)
             {
