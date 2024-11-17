@@ -23,13 +23,10 @@ public class Projectile : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.AddRelativeForce(new Vector3(Random.Range(forceMin.x, forceMax.x), Random.Range(forceMin.y, forceMax.y), Random.Range(forceMin.z, forceMax.z)));
-        lastPos = transform.position;
         parentObject = transform.parent;
         transform.parent = null;
         lastPos = transform.position;
-        
         StartCoroutine(BulletDisable());
-       
     }
     IEnumerator BulletDisable()
     {
@@ -41,8 +38,6 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (this.gameObject.activeInHierarchy)
-        {
             Vector3 dir = transform.position - lastPos;
 
             Debug.DrawRay(lastPos, dir, Color.blue, disappearTime);
@@ -55,7 +50,6 @@ public class Projectile : MonoBehaviour
             }
 
             lastPos = transform.position;
-        }
     }
 
     void Hitted(RaycastHit hit)
@@ -67,9 +61,5 @@ public class Projectile : MonoBehaviour
         {
             hit.rigidbody.AddForceAtPosition(rb.velocity * rb.mass * collisionForceMultiplier, this.transform.position);
         }
-        
-        
-        //Destroy(gameObject);
-
     }
 }

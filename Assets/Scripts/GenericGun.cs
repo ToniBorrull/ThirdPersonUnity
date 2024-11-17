@@ -43,27 +43,33 @@ public class GenericGun : MonoBehaviour
         transform.localPosition = Vector3.Lerp(transform.localPosition, originalPosition, positionRecover * Time.deltaTime);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, originalRotation, rotationRecover * Time.deltaTime);
 
-        if (clipCurrent <= 0) {
-            if (reloadTime <= 0) {
-                clipCurrent = clipMax;
-                reloadTime = maxTime;
-            }
-            else
-            {
-                reloadTime -= Time.deltaTime;
-            }
-        }
         if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(transform.position, transform.forward * hit.distance, Color.yellow);
             mira.transform.position = Camera.main.WorldToScreenPoint(hit.point);
-            //Debug.Log("Did Hit");
         }
         else
         {
             Debug.DrawRay(transform.position, transform.forward * distance, Color.red);
-            //Debug.Log("Not Hit");
         }
+        //Recargar
+        if (clipCurrent <= 0)
+        {
+            if (reloadTime <= 0)
+            {
+                clipCurrent = clipMax;
+                reloadTime = maxTime;
+            }
+            else if (reloadTime > 0)
+            {
+                reloadTime -= Time.deltaTime;
+            }
+        }
+        if(reloadTime < 0)
+        {
+            reloadTime = 0;
+        }
+        //Disparar
         if (automatic)
         {
             if (Input.GetButton("Fire1") && clipCurrent > 0 && Time.time > lastShot + fireRate)
@@ -71,11 +77,16 @@ public class GenericGun : MonoBehaviour
                 Fire();
             }
         }
+        else
+        {
+            if (Input.GetButtonDown("Fire1") && clipCurrent > 0)
+            {
+                Fire();
+            }
+        }
     }
     public void Fire()
     {
-        //Destroy(Instantiate(bullet, firePoint.position, firePoint.rotation), 10);
-
          bullet = ObjectPool.SharedInstance.GetPooledObject();
         if(bullet != null)
         {

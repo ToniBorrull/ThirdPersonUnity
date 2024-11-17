@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class CameraMove : MonoBehaviour
 {
     public LayerMask layerMask;
     public float speed = 10f;
@@ -11,7 +11,7 @@ public class CameraFollow : MonoBehaviour
     Vector3 dir1;
     private float vertical;
     private float horizontal;
-
+    private float camOffset = 0.6f;
     public float lerpSpeed;
 
     public GameObject camara;
@@ -29,15 +29,14 @@ public class CameraFollow : MonoBehaviour
     {
         transform.position = pivot.transform.position;
 
-        vertical -= Input.GetAxisRaw("Mouse Y");//Input.GetAxis("Vertical") * Time.deltaTime * speed;
-        horizontal += Input.GetAxisRaw("Mouse X");//Input.GetAxis("Horizontal") * Time.deltaTime * speed;
+        vertical -= Input.GetAxis("Mouse Y");
+        horizontal += Input.GetAxis("Mouse X");
 
-        camara.transform.LookAt(this.transform.position + transform.right * 0.5f);
-        vertical = Mathf.Clamp(vertical, -90f, 90f);
-
-        Vector3 dir = new Vector3(-vertical, horizontal, 0) * speed;
-        transform.rotation = Quaternion.Euler(vertical, horizontal, 0);
-        Vector3 pos = camara.transform.position;
+        Vector3 rightPos = this.transform.position + transform.right * camOffset;
+        camara.transform.LookAt(rightPos);
+        
+        float verticalClamp = Mathf.Clamp(vertical, -90f, 90f);
+        transform.rotation = Quaternion.Euler(verticalClamp, horizontal, 0);   
         dir1 = (camara.transform.position - this.transform.position).normalized;
 
 
@@ -46,14 +45,12 @@ public class CameraFollow : MonoBehaviour
         {
             Debug.DrawRay(transform.position, dir1 * hit.distance, Color.yellow);
             camara.transform.localPosition = Vector3.back * hit.distance;
-            Debug.Log(hit.collider.name);
         }
         else
         {
             Debug.DrawRay(transform.position, dir1 * 1000, Color.white);
             Vector3 targetPos = transform.position - transform.forward * distance;
             camara.transform.position = Vector3.Lerp(camara.transform.position, targetPos, lerpSpeed * Time.deltaTime);
-            //Debug.Log("Did not Hit");
         }
     }
 }
